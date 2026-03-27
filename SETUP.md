@@ -13,8 +13,8 @@ Fast track to get DataLoom running on your machine.
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/dataloom-etl-manager.git
-cd dataloom-etl-manager
+git clone https://github.com/irivero/portfolio-ravendb-olap-etl-manager.git
+#cd dataloom-etl-manager
 ```
 
 ### 2. Install Dependencies
@@ -81,7 +81,7 @@ lsof -ti:3000 | xargs kill -9
 
 - 📖 [Full Documentation](README.md)
 - 🐛 [Troubleshooting Guide](README.md#-troubleshooting)
-- 💬 [Open an Issue](https://github.com/yourusername/dataloom-etl-manager/issues)
+- 💬 [Open an Issue](https://github.com/irivero/portfolio-ravendb-olap-etl-manager/issues)
 
 ---
 
