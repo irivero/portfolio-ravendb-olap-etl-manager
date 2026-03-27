@@ -1,0 +1,68 @@
+# Dependencies
+node_modules/
+package-lock.json
+*.lock
+
+# Environment Variables
+.env
+.env.local
+.env.production
+.env.*.local
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Certificates & Security
+certs/
+*.pem
+*.pfx
+*.p12
+*.key
+*.crt
+*.cer
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# Build & Distribution
+dist/
+build/
+out/
+
+# Temporary Files
+tmp/
+temp/
+*.tmp
+
+# Database Files
+*.db
+*.sqlite
+*.sqlite3
+
+# Coverage & Testing
+coverage/
+.nyc_output/
+*.coveragerc
+
+# Misc
+.cache/
+.parcel-cache/
+.next/
+.nuxt/

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Debug - ETL Manager</title>
+  <style>
+    body { font-family: monospace; padding: 20px; }
+    .test { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+    .pass { background: #d4edda; border-color: #c3e6cb; }
+    .fail { background: #f8d7da; border-color: #f5c6cb; }
+    button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>ETL Manager Debug</h1>
+  
+  <div class="test">
+    <h3>1. DOM Elements Check</h3>
+    <button onclick="checkDOM()">Check DOM</button>
+    <pre id="domResult"></pre>
+  </div>
+
+  <div class="test">
+    <h3>2. JavaScript Loaded</h3>
+    <button onclick="checkJS()">Check JS</button>
+    <pre id="jsResult"></pre>
+  </div>
+
+  <div class="test">
+    <h3>3. Server Connection</h3>
+    <button onclick="checkServer()">Check Server</button>
+    <pre id="serverResult"></pre>
+  </div>
+
+  <div class="test">
+    <h3>4. Clear Cache & Reload</h3>
+    <button onclick="clearAndReload()">Clear Cache & Reload Main App</button>
+  </div>
+
+  <script>
+    function checkDOM() {
+      const result = document.getElementById('domResult');
+      const checks = [
+        ['connectBtn', document.getElementById('connectBtn')],
+        ['ravenUrl', document.getElementById('ravenUrl')],
+        ['database', document.getElementById('database')],
+        ['certFile', document.getElementById('certFile')]
+      ];
+      
+      let output = '';
+      checks.forEach(([name, el]) => {
+        output += `${name}: ${el ? '✓ Found' : '✗ Missing'}\n`;
+      });
+      
+      result.textContent = output;
+      result.parentElement.className = 'test ' + (checks.every(c => c[1]) ? 'pass' : 'fail');
+    }
+
+    function checkJS() {
+      const result = document.getElementById('jsResult');
+      let output = '';
+      
+      // Check if app.js is loaded
+      const scripts = Array.from(document.scripts);
+      const appScript = scripts.find(s => s.src.includes('app.js'));
+      output += `app.js loaded: ${appScript ? '✓ Yes' : '✗ No'}\n`;
+      
+      // Check if functions exist (they won't in this page, but we can check)
+      output += `Window location: ${window.location.href}\n`;
+      output += `Cache status: ${navigator.onLine ? 'Online' : 'Offline'}\n`;
+      
+      result.textContent = output;
+      result.parentElement.className = 'test pass';
+    }
+
+    async function checkServer() {
+      const result = document.getElementById('serverResult');
+      result.textContent = 'Testing server connection...';
+      
+      try {
+        const response = await fetch('http://localhost:3000/api/connect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            url: 'https://a.aimpoc-dev.aimdev.ravendb.cloud/',
+            database: 'ravendbpoc',
+            certificatePath: ''
+          })
+        });
+        
+        const data = await response.json();
+        result.textContent = `Server response:\nStatus: ${response.status}\nData: ${JSON.stringify(data, null, 2)}`;
+        result.parentElement.className = 'test ' + (response.ok ? 'pass' : 'fail');
+      } catch (error) {
+        result.textContent = `✗ Error: ${error.message}`;
+        result.parentElement.className = 'test fail';
+      }
+    }
+
+    function clearAndReload() {
+      // Clear cache and reload main app
+      if ('caches' in window) {
+        caches.keys().then(names => {
+          names.forEach(name => caches.delete(name));
+        });
+      }
+      
+      // Open main app in new tab with cache-busting
+      window.open('index.html?t=' + Date.now(), '_blank');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "ravendb-etl-manager",
+  "version": "1.0.0",
+  "description": "Web-based RavenDB ETL transformation manager with live code editing",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "build": "npm run build:client",
+    "build:client": "cd public && npm run build"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ravendb": "^6.0.0",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5",
+    "dotenv": "^16.3.1",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

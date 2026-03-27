@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DataLoom | OPPRA</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  
+  <!-- Monaco Editor (VS Code editor) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/editor/editor.main.css">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* DataLoom Theme Colors - Unified Dark Palette */
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --primary-dark: #2563eb;
+      --success: #10b981;
+      --success-hover: #34d399;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      
+      /* Background layers - progressively lighter */
+      --bg-darkest: #0a0a14;
+      --bg-darker: #0f0f1e;
+      --bg-dark: #1a1a2e;
+      --bg-elevated: #1e1e2f;
+      --bg-card: #252536;
+      --bg-hover: rgba(59, 130, 246, 0.08);
+      
+      /* Borders - subtle in dark theme */
+      --border: rgba(255, 255, 255, 0.08);
+      --border-light: rgba(255, 255, 255, 0.12);
+      --border-focus: rgba(59, 130, 246, 0.4);
+      
+      /* Text hierarchy */
+      --text-primary: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --text-tertiary: #64748b;
+      
+      /* Shadows for depth */
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+      --glow-primary: 0 0 20px rgba(59, 130, 246, 0.3);
+      --glow-success: 0 0 20px rgba(16, 185, 129, 0.3);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, var(--bg-darkest) 0%, var(--bg-darker) 100%);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    .app-container {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      height: 100vh;
+    }
+
+    /* ─── SIDEBAR ─────────────────────────────────────────────── */
+    .sidebar {
+      background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+      border-right: 1px solid var(--border);
+      padding: 24px;
+      overflow-y: auto;
+      box-shadow: 4px 0 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section {
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary-hover);
+      margin-bottom: 12px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.2s;
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--border-focus), var(--glow-primary);
+      background: var(--bg-card);
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary) 100%);
+      box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success) 0%, var(--success-hover) 100%);
+      color: white;
+      box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-success:hover {
+      background: var(--success-hover);
+      box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+      color: white;
+      box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-danger:hover {
+      background: linear-gradient(135deg, #f87171 0%, var(--danger) 100%);
+      box-shadow: 0 4px 8px rgba(239, 68, 68, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      border: 1px solid var(--border-light);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-card);
+      border-color: var(--primary);
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Custom scrollbar for dark theme */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-darker);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-light);
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary);
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .status-connected {
+      background: var(--success);
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { 
+        opacity: 1;
+        box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+      }
+      50% { 
+        opacity: 0.7;
+        box-shadow: 0 0 16px rgba(16, 185, 129, 0.8);
+      }
+    }
+
+    .status-disconnected {
+      background: var(--text-secondary);
+    }
+
+    .collections-list {
+      max-height: 800px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px;
+      background: var(--bg-elevated);
+    }
+
+    .collection-item {
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .collection-item:hover {
+      background: var(--bg-hover);
+    }
+
+    .collection-item input[type="checkbox"] {
+      width: auto;
+      margin-right: 8px;
+    }
+
+    .collection-count {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* ─── MAIN CONTENT ────────────────────────────────────────── */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .header {
+      background: var(--bg-dark);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+    }
+
+    .tab {
+      padding: 12px 20px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background: var(--bg-hover);
+      box-shadow: inset 0 -3px 0 var(--primary);
+    }
+
+    .tab:hover {
+      color: var(--primary);
+    }
+
+    .collection-detail-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .collection-detail-tab:hover {
+      color: var(--primary);
+    }
+
+    .editor-container {
+      flex: 1;
+      padding: 24px 32px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-darker);
+    }
+
+    #editorView {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #tasksView {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0;
+    }
+
+    #monaco-editor {
+      flex: 1;
+      min-height: 800px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .editor-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding: 12px 16px;
+      background: var(--bg-elevated);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .toolbar-left {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .alert-success {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success-hover);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .alert-info {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--primary-hover);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .alert-warning {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ─── ALERT CONTAINER ─────────────────────────────────────── */
+    .alertContainer {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 400px;
+      pointer-events: none;
+    }
+
+    .alertContainer .alert {
+      pointer-events: auto;
+      margin-bottom: 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ─── MODAL STYLES ────────────────────────────────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-dark);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 20px;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+    }
+
+    .modal-close:hover {
+      background: var(--bg-hover);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+    }
+
+    .form-group small {
+      display: block;
+      margin-top: 4px;
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    .modal-footer {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ─── ETL TASKS TABLE ─────────────────────────────────────── */
+    #etlTasksList {
+      overflow-y: auto;
+      max-height: calc(100vh - 280px);
+    }
+
+    .etl-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-dark);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .etl-table thead {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      border-bottom: 2px solid var(--border-light);
+    }
+
+    .etl-table th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .etl-table td {
+      padding: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    .etl-table tbody tr {
+      transition: all 0.2s;
+    }
+
+    .etl-table tbody tr:hover {
+      background: var(--bg-hover);
+      transform: translateX(2px);
+    }
+
+    .etl-type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .etl-type-raven {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--primary-hover);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+
+    .etl-type-olap {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success-hover);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .etl-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+    }
+
+    .etl-status-active {
+      color: var(--success);
+      border-color: rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .etl-status-disabled {
+      color: var(--text-tertiary);
+      opacity: 0.7;
+    }
+
+    .etl-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .btn-icon {
+      padding: 8px 12px;
+      font-size: 16px;
+      min-width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .btn-icon:hover {
+      background: var(--bg-card);
+      border-color: var(--border-light);
+      color: var(--text-primary);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .etl-edit-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+    }
+
+    .etl-delete-btn:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+      box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+    }
+
+    #addEtlTaskBtn:hover {
+      border-color: #10b981;
+      color: #10b981;
+      background: rgba(16, 185, 129, 0.15);
+      box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+    }
+
+    #refreshTasksBtn:hover {
+      border-color: #9ca3af;
+      color: #e5e7eb;
+      box-shadow: 0 4px 8px rgba(156, 163, 175, 0.2);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-secondary);
+    }
+
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    /* ─── RESPONSIVE ──────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .app-container {
+        grid-template-columns: 280px 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .app-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        display: none;
+      }
+    }
+
+    /* ─── TRANSFORM LIST ITEMS ────────────────────────────────── */
+    .transform-list-item:hover {
+      background: rgba(99, 102, 241, 0.15) !important;
+    }
+    
+    .transform-list-item:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- ─── SIDEBAR ─────────────────────────────────────────────── -->
+    <aside class="sidebar">
+      <div class="logo">
+        <img src="/logo.svg" alt="DataLoom" style="width: 80px; height: 80px; margin: 0 auto 16px; display: block;">
+        <h2 style="text-align: center; font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">DataLoom</h2>
+        <p style="text-align: center; font-size: 12px; color: var(--text-secondary); margin-bottom: 24px; font-weight: 500;">for OPPRA</p>
+      </div>
+
+      <!-- CONNECTION -->
+      <section class="section">
+        <h3 class="section-title">Connection</h3>
+        <div class="form-group">
+          <label>
+            <span class="status-indicator" id="connectionStatus"></span>
+            RavenDB URL
+          </label>
+          <input type="text" id="ravenUrl" placeholder="https://a.server.ravendb.cloud" 
+                 value="https://a.aimpoc-dev.aimdev.ravendb.cloud/">
+        </div>
+        <div class="form-group">
+          <label>Database</label>
+          <input type="text" id="database" placeholder="ravendbpoc" value="ravendbpoc">
+        </div>
+        <div class="form-group">
+          <label>Certificate (optional)</label>
+          <input type="text" id="certPath" placeholder="./certs/client.pem" 
+                 value="../certs/aimpoc-dev.aimdev.client.certificate.pem"
+                 style="margin-bottom: 8px;">
+          <input type="file" id="certFile" accept=".pem,.crt,.key" 
+                 style="margin-bottom: 4px;">
+          <small style="font-size: 12px; color: var(--text-secondary);">
+            Enter path or browse for certificate file
+          </small>
+        </div>
+        <button class="btn btn-primary btn-block" id="connectBtn">
+          Connect
+        </button>
+        <button class="btn btn-secondary btn-block" id="disconnectBtn" style="display: none; margin-top: 8px;">
+          Disconnect
+        </button>
+      </section>
+    </aside>
+
+    <!-- ─── MAIN CONTENT ────────────────────────────────────────── -->
+    <main class="main-content">
+      <header class="header">
+        <h1 class="header-title"> ETL Transformations</h1>
+        <div id="headerActions">
+          <button class="btn btn-primary" id="newEtlBtn" style="display: none;">
+            <span style="font-size: 16px;">➕</span> New ETL Task
+          </button>
+          <button class="btn btn-success" id="testBtn" style="display: none;">Test Script</button>
+          <button class="btn btn-primary" id="saveBtn" style="display: none;">Save ETL</button>
+        </div>
+      </header>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="tasks">📋 ETL Tasks</button>
+        <button class="tab" data-tab="collections">📚 Collections</button>
+        <button class="tab" data-tab="connectionStrings">🔌 Connection Strings</button>
+        <button class="tab" data-tab="editor" style="display: none;">Editor</button>
+      </div>
+
+      <div class="editor-container">
+        <!-- COLLECTIONS TAB VIEW -->
+        <div id="collectionsTabView" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="font-size: 20px; font-weight: 600;">Collections</h2>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-icon" id="refreshCollectionsTabBtn" title="Refresh Collections" style="color: #6b7280;">
+                🔄
+              </button>
+            </div>
+          </div>
+          <div class="collections-list" id="collectionsTabList">
+            <div style="text-align: center; color: var(--text-secondary); padding: 40px;">
+              Connect to database first
+            </div>
+          </div>
+        </div>
+
+        <!-- CONNECTION STRINGS TAB VIEW -->
+        <div id="connectionStringsTabView" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="font-size: 20px; font-weight: 600;">Connection Strings</h2>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-success" id="addConnectionStringTabBtn" style="padding: 8px 16px;">
+                ➕ Add New
+              </button>
+              <button class="btn-icon" id="refreshConnectionStringsTabBtn" title="Refresh Connection Strings" style="color: #6b7280;">
+                🔄
+              </button>
+            </div>
+          </div>
+          <div id="connectionStringsTabList">
+            <div style="text-align: center; color: var(--text-secondary); padding: 40px;">
+              Connect to database first
+            </div>
+          </div>
+        </div>
+
+        <!-- EDITOR VIEW -->
+        <div id="editorView" style="display: none;">
+          <!-- EDITOR TOOLBAR -->
+          <div class="editor-toolbar">
+            <div class="toolbar-left">
+              <label style="margin: 0;">
+                <strong>ETL Name:</strong>
+                <input type="text" id="etlName" placeholder="MyCustomerETL" 
+                       style="width: 200px; margin-left: 8px;">
+              </label>
+              <label style="margin: 0;">
+                <strong>Target:</strong>
+                <select id="etlType" style="width: 150px; margin-left: 8px;">
+                  <option value="RavenEtl">RavenDB</option>
+                  <option value="OlapEtl">Parquet/OLAP</option>
+                </select>
+              </label>
+              <label style="margin: 0;">
+                <strong>Connection String:</strong>
+                <select id="connectionStringSelector" style="width: 200px; margin-left: 8px;">
+                  <option value="">-- Select connection string --</option>
+                </select>
+              </label>
+              <button class="btn btn-success" id="newConnectionStringBtn" style="padding: 6px 12px;">
+                + New
+              </button>
+            </div>
+            <div class="toolbar-left">
+              <span id="selectedCollections" style="font-size: 12px; color: var(--text-secondary);">
+                No collections selected
+              </span>
+            </div>
+          </div>
+
+          <!-- MONACO EDITOR -->
+          <div id="monaco-editor"></div>
+        </div>
+
+        <!-- ETL TASKS VIEW -->
+        <div id="tasksView" style="display: block;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="font-size: 20px; font-weight: 600;">ETL Tasks</h2>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-icon" id="addEtlTaskBtn" title="Add New ETL Task" style="border-color: #10b981; color: #10b981; background: rgba(16, 185, 129, 0.1);">
+                ➕
+              </button>
+              <button class="btn-icon" id="refreshTasksBtn" title="Refresh ETL Tasks" style="color: #6b7280;">
+                🔄
+              </button>
+            </div>
+          </div>
+          <div id="etlTasksList">
+            <!-- ETL tasks will be dynamically loaded here -->
+          </div>
+        </div>
+
+        <!-- COLLECTION DETAILS VIEW -->
+        <div id="collectionDetailsView" style="display: none;">
+          <!-- Header with Back Button -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <button class="btn-icon" id="backToCollectionsBtn" title="Back to Collections" style="color: var(--text-secondary);">
+                ←
+              </button>
+              <h2 id="collectionDetailTitle" style="font-size: 20px; font-weight: 600; margin: 0;">Collection Details</h2>
+            </div>
+          </div>
+
+          <!-- Collection Info Cards -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+            <div style="padding: 20px; background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border);">
+              <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Collection Name</div>
+              <div id="viewCollectionName" style="font-size: 22px; font-weight: 600; color: var(--text-primary);"></div>
+            </div>
+            <div style="padding: 20px; background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border);">
+              <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Document Count</div>
+              <div id="viewDocumentCount" style="font-size: 22px; font-weight: 600; color: var(--primary);"></div>
+            </div>
+          </div>
+
+          <!-- ETL Action Card -->
+          <div style="padding: 24px; background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-elevated) 100%); border-radius: 12px; border: 1px solid var(--border); margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h3 style="margin: 0 0 8px 0; font-size: 16px; color: var(--text-primary); font-weight: 600;">ETL Configuration</h3>
+                <p style="margin: 0; font-size: 13px; color: var(--text-secondary);">
+                  <span id="etlActionMessage">Add this collection to your ETL transformation pipeline</span>
+                </p>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-success" id="viewAddToEtlBtn" style="padding: 10px 20px;">
+                  <span>✓</span> Add to ETL
+                </button>
+                <button class="btn btn-danger" id="viewRemoveFromEtlBtn" style="display: none; padding: 10px 20px;">
+                  <span>✗</span> Remove from ETL
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Collection Detail Tabs -->
+          <div style="display: flex; gap: 8px; border-bottom: 1px solid var(--border); margin-bottom: 20px;">
+            <button class="collection-detail-tab active" data-detail-tab="documents" style="padding: 12px 20px; border: none; background: none; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--text-secondary); border-bottom: 3px solid transparent; transition: all 0.2s;">
+              📄 Documents
+            </button>
+            <button class="collection-detail-tab" data-detail-tab="query" style="padding: 12px 20px; border: none; background: none; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--text-secondary); border-bottom: 3px solid transparent; transition: all 0.2s;">
+              🔍 Query
+            </button>
+          </div>
+
+          <!-- Documents Tab Content -->
+          <div id="documentsTabContent" style="display: block;">
+            <!-- Document Preview Section -->
+            <div style="background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden;">
+              <div style="padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <h3 style="margin: 0; font-size: 16px; color: var(--text-primary); font-weight: 600;">Document Preview</h3>
+                  <p style="margin: 4px 0 0 0; font-size: 13px; color: var(--text-secondary);">Browse all documents from this collection</p>
+                </div>
+                <button id="btnRefreshDocuments" class="btn btn-primary" style="display: none; padding: 8px 16px; font-size: 13px;" title="Refresh document list">
+                  <span style="font-size: 16px;">🔄</span> Refresh
+                </button>
+              </div>
+              <div id="documentListContainer" style="max-height: 400px; overflow-y: auto;">
+                <!-- Documents will be loaded here -->
+              </div>
+              <div id="documentPaginationContainer">
+                <!-- Pagination controls will be loaded here -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Query Tab Content -->
+          <div id="queryTabContent" style="display: none; max-height: calc(100vh - 400px); overflow-y: auto;">
+            <div style="background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden;">
+              <!-- Query Editor -->
+              <div style="padding: 16px; border-bottom: 1px solid var(--border);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                  <h3 style="margin: 0; font-size: 16px; color: var(--text-primary); font-weight: 600;">Query</h3>
+                  <button id="btnRunQuery" class="btn btn-primary" style="padding: 8px 20px; display: inline-flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 16px;">▶</span> Run Query
+                  </button>
+                </div>
+                <div id="queryEditor" style="height: 200px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;"></div>
+              </div>
+              
+              <!-- Query Results -->
+              <div style="padding: 16px;">
+                <h3 style="margin: 0 0 12px 0; font-size: 16px; color: var(--text-primary); font-weight: 600;">Results</h3>
+                <div id="queryResultsContainer" style="max-height: 500px; overflow: auto; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+                  <div style="text-align: center; color: var(--text-secondary); padding: 40px;">
+                    Write a query and click "Run Query" to see results
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Alert Container -->
+  <div id="alertContainer" class="alertContainer"></div>
+
+  <!-- Document Detail Modal -->
+  <div id="documentDetailModal" class="modal-overlay">
+    <div class="modal" style="max-width: 900px; width: 90%;">
+      <div class="modal-header">
+        <h2 style="font-size: 18px; display: flex; align-items: center; gap: 10px;">
+          <span>📄</span>
+          <span id="docModalTitle">Document Details</span>
+        </h2>
+        <button class="modal-close" id="btnCloseDocModal">×</button>
+      </div>
+      
+      <div style="padding: 20px;">
+        <!-- View Mode -->
+        <div id="documentViewMode" style="display: block;">
+          <div id="documentDetailContent" style="background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 16px; max-height: 500px; overflow-y: auto;">
+            <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+              <div class="loading"></div>
+              <p style="margin-top: 12px;">Loading document...</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Edit Mode -->
+        <div id="documentEditMode" style="display: none;">
+          <textarea id="documentEditTextarea" style="width: 100%; height: 500px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 16px; color: var(--text-primary); font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.6; resize: vertical;"></textarea>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btnCloseDocModalFooter">Close</button>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-primary" id="btnCloneDocument" style="display: inline-flex;">
+            <span>🔄</span> Clone
+          </button>
+          <button class="btn btn-primary" id="btnEditDocument" style="display: inline-flex;">
+            <span>✏️</span> Edit
+          </button>
+          <button class="btn btn-primary" id="btnSaveDocument" style="display: none;">
+            <span>💾</span> Save
+          </button>
+          <button class="btn btn-secondary" id="btnCancelEdit" style="display: none;">
+            Cancel
+          </button>
+          <button class="btn btn-primary" id="btnCopyDocument">
+            <span>📋</span> Copy JSON
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connection String Modal -->
+  <div id="connectionStringModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Create Connection String</h2>
+        <button class="modal-close" id="closeConnectionStringModalBtn">×</button>
+      </div>
+
+      <div class="form-group">
+        <label for="csName">Connection String Name *</label>
+        <input type="text" id="csName" placeholder="MyADLSConnection">
+      </div>
+
+      <div class="form-group">
+        <label for="csType">Type *</label>
+        <select id="csType">
+          <option value="OLAP">OLAP (ADLS / Parquet)</option>
+          <option value="RavenDB">RavenDB</option>
+        </select>
+      </div>
+
+      <div id="olapFields">
+        <h3 style="margin: 20px 0 12px 0; font-size: 16px;">Azure ADLS Configuration</h3>
+
+        <div class="form-group">
+          <label for="csAccountName">Storage Account Name *</label>
+          <input type="text" id="csAccountName" placeholder="mystorageaccount">
+          <small>Your Azure Storage account name</small>
+        </div>
+
+        <div class="form-group">
+          <label for="csAccountKey">Storage Account Key *</label>
+          <input type="password" id="csAccountKey" placeholder="Base64 access key">
+          <small>Found in Azure Portal → Storage Account → Access keys</small>
+        </div>
+
+        <div class="form-group">
+          <label for="csContainerName">Container Name *</label>
+          <input type="text" id="csContainerName" placeholder="ravendb-exports">
+          <small>The container where Parquet files will be stored</small>
+        </div>
+
+        <div class="form-group">
+          <label for="csRemoteFolder">Remote Folder Path (optional)</label>
+          <input type="text" id="csRemoteFolder" placeholder="customers/etl">
+          <small>Subdirectory within the container</small>
+        </div>
+      </div>
+
+      <div id="ravenDbFields" style="display: none;">
+        <h3 style="margin: 20px 0 12px 0; font-size: 16px;">RavenDB Configuration</h3>
+
+        <div class="form-group">
+          <label for="csRavenUrl">Database URL *</label>
+          <input type="text" id="csRavenUrl" placeholder="https://a.yourserver.ravendb.cloud/">
+        </div>
+
+        <div class="form-group">
+          <label for="csRavenDatabase">Database Name *</label>
+          <input type="text" id="csRavenDatabase" placeholder="MyTargetDatabase">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn" id="cancelConnectionStringBtn">Cancel</button>
+        <button class="btn btn-primary" id="saveConnectionStringBtn">Create Connection String</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETL Creation Modal -->
+  <div id="etlCreationModal" class="modal-overlay">
+    <div class="modal" style="max-width: 1200px; max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <h2>Create New ETL Task</h2>
+        <button class="modal-close" onclick="document.getElementById('etlCreationModal').classList.remove('active')">×</button>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto; padding: 0 24px;">
+        <!-- ETL Configuration -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="modalEtlName">ETL Task Name *</label>
+            <input type="text" id="modalEtlName" placeholder="My ETL Task">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="modalEtlType">ETL Type *</label>
+            <select id="modalEtlType">
+              <option value="RavenEtl">RavenDB ETL</option>
+              <option value="OlapEtl">OLAP/Parquet ETL</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label for="modalConnectionStringSelector">Connection String *</label>
+          <div style="display: flex; gap: 8px;">
+            <select id="modalConnectionStringSelector" style="flex: 1;">
+              <option value="">-- Select connection string --</option>
+            </select>
+            <button class="btn btn-success" id="modalNewConnectionBtn" style="padding: 6px 12px;">
+              + New
+            </button>
+          </div>
+        </div>
+
+        <!-- Two Column Layout: Monaco Left, Collections Right -->
+        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <!-- Monaco Editor - Left -->
+          <div class="form-group" style="margin-bottom: 0;">
+            <label>Transformation Script *</label>
+            <div id="modalMonacoEditor" style="height: 350px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;"></div>
+          </div>
+
+          <!-- Collections Selector - Right -->
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="modalCollectionsSelector">Collections * <small style="font-weight: normal; color: var(--text-secondary);">(Ctrl+Click for multiple)</small></label>
+            <select id="modalCollectionsSelector" multiple style="width: 100%; height: 350px; padding: 8px; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 13px; font-family: 'Segoe UI', system-ui, sans-serif;">
+              <!-- Collections will be loaded dynamically -->
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="border-top: 1px solid var(--border); margin-top: 0;">
+        <button class="btn" id="modalCancelBtn">Cancel</button>
+        <button class="btn btn-success" id="modalTestBtn">
+          <span>🧪</span> Test Script
+        </button>
+        <button class="btn btn-primary" id="modalSaveBtn">
+          <span>💾</span> Create ETL Task
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETL Details Modal -->
+  <div id="etlDetailsModal" class="modal-overlay">
+    <div class="modal" style="max-width: 1400px; width: 95%; max-height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <h2 id="etlDetailsTitle">ETL Task Details</h2>
+        <button class="modal-close" id="btnCloseEtlDetailsModal">×</button>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; padding-right: 8px;">
+        <!-- ETL Info Section -->
+        <div style="background: var(--card-bg); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
+          <div style="display: grid; grid-template-columns: 140px 1fr; gap: 12px; align-items: start;">
+            <div style="color: var(--text-secondary); font-weight: 500;">Name:</div>
+            <div id="etlDetailsName" style="color: var(--text-primary); font-weight: 600;"></div>
+            
+            <div style="color: var(--text-secondary); font-weight: 500;">Type:</div>
+            <div id="etlDetailsType" style="color: var(--accent);"></div>
+            
+            <div style="color: var(--text-secondary); font-weight: 500;">Connection String:</div>
+            <div id="etlDetailsConnectionString" style="color: var(--text-primary); font-family: 'Courier New', monospace;"></div>
+            
+            <div style="color: var(--text-secondary); font-weight: 500;">Status:</div>
+            <div id="etlDetailsStatus"></div>
+          </div>
+        </div>
+
+        <!-- Configuration Section -->
+        <div id="etlConfigSection" style="background: var(--card-bg); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
+          <h3 style="margin: 0 0 12px 0; font-size: 16px; color: var(--text-primary);">⚙️ Configuration</h3>
+          <div id="etlConfigContent" style="display: grid; grid-template-columns: 180px 1fr; gap: 12px; align-items: start;">
+            <!-- Configuration fields will be dynamically inserted here -->
+          </div>
+        </div>
+
+        <!-- Transformations Section -->
+        <div style="flex: 1; min-height: 0;">
+          <h3 style="margin: 0 0 12px 0; font-size: 16px; color: var(--text-primary);">📋 Transformations</h3>
+          <div id="etlTransformationsList">
+            <!-- Transformations will be dynamically inserted here -->
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="border-top: 1px solid var(--border); margin-top: 16px; padding-top: 16px;">
+        <button class="btn" id="btnCloseEtlDetailsModalFooter">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Monaco Editor -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
